@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -20,7 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../application/context/AuthContext";
 
 const Navbar = () => {
-  const { user, isLoggedIn, logout, authLoading } = useAuth();
+  const { user, isLoggedIn, logout, setLocalData } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const Navbar = () => {
 
   const handleLogoutClick = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -159,13 +159,9 @@ const Navbar = () => {
                 </MenuItem>
               </div>
             ) : (
-              <MenuItem
-                  component={Link}
-                  to="/"
-                  onClick={handleLogoutClick}
-                >
-                  Logout
-                </MenuItem>
+              <MenuItem component={Link} to="/" onClick={handleLogoutClick}>
+                Logout
+              </MenuItem>
             )}
           </Menu>
         </div>

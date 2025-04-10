@@ -1,6 +1,5 @@
-import React, { useState, createContext, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import authApi from "../../infrastructure/api/AuthAPI"; // Assuming this is your API interaction file
+import React, { useState, createContext, useContext , useEffect} from "react";
+import authApi from "../../infrastructure/api/AuthAPI";
 
 // Create a new context
 const AuthContext = createContext({
@@ -12,6 +11,8 @@ const AuthContext = createContext({
   authLoading: false,
   authError: null,
   loginSuccess: false,
+  fabClasses: "",
+  // setLocalData: ( userId,userName ,isLoggedIn ,favouriteRecipies) => Promise.resolve(null),
 });
 
 // Create a new provider component
@@ -20,7 +21,40 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
+  const [favouriteRecipies, setFavouriteRecipies] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
+
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName'); // Example key
+    const storedUserId = localStorage.getItem('userId'); // Example key
+    const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
+    const storedFavRecipe = localStorage.getItem('favouriteRecipies'); // Example key
+
+    if (storedIsLoggedIn === 'true') {
+      try {
+        setUser({
+          "id": storedUserId, // Use the stored userId
+          "name": storedUserName, // Use the stored userName
+        });
+        setIsLoggedIn(true);
+        setLoginSuccess(true);
+        setFavouriteRecipies(storedFavRecipe);
+      } catch (error) {
+        console.error('Error parsing new user data:', error);
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('favouriteRecipies');
+        setUser(null);
+        setIsLoggedIn(false);
+        setLoginSuccess(false);
+      }
+    } else {
+      setUser(null);
+      setIsLoggedIn(false);
+      setLoginSuccess(false);
+    }
+  }, []);
 
   const login = async (credentials) => {
     setAuthLoading(true);
@@ -29,6 +63,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authApi.login(credentials);
       setUser(response.data);
+      handleLoginSuccess(response.data);
       setIsLoggedIn(true);
       localStorage.setItem("token", response.data.token);
       setLoginSuccess(true);
@@ -43,12 +78,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Save login user data locally.
+  const handleLoginSuccess = (userData) => {
+    localStorage.setItem("userId", userData?.id);
+    localStorage.setItem("userName", userData?.name);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("favouriteRecipies", "");
+  };
+
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
     localStorage.removeItem("token");
     setLoginSuccess(false);
-    // navigate("/login");
+    handleLogout();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("favouriteRecipies");
   };
 
   const register = async (registrationData) => {

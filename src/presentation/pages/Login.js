@@ -18,7 +18,7 @@ const Login = () => {
   const navigate = useNavigate();
   const navigationDelay = 1500; 
   
-  const { login, authLoading, authError } = useAuth();
+  const { login, authLoading, authError, user } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [validationErrors, setValidationErrors] = useState({});
@@ -60,6 +60,9 @@ const Login = () => {
       setShowValidationErrorSnackbar(true);
     }
   };
+
+ 
+
   return (
     <Box
       display="flex"
