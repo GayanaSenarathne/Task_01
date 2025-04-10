@@ -11,7 +11,7 @@ const AuthContext = createContext({
   authLoading: false,
   authError: null,
   loginSuccess: false,
-  fabClasses: "",
+  favRecipies: "",
   // setLocalData: ( userId,userName ,isLoggedIn ,favouriteRecipies) => Promise.resolve(null),
 });
 
@@ -128,6 +128,7 @@ export const AuthProvider = ({ children }) => {
         authLoading,
         authError,
         loginSuccess,
+        favouriteRecipies
       }}
     >
       {children}
