@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import RecipeData from '../components/RecipeData';
 import {
   Box,
   Typography,
@@ -12,25 +11,43 @@ import {
 } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import { Link } from 'react-router-dom';
+import { useRecipe } from '../../application/context/RecipeContext';
 
-const loggedInUserId = 1; 
+const loggedInUserId = 1; // Replace with actual user ID from your authentication
 
 const MyRecipe = () => {
+  const { recipes, loading, error, deleteRecipe } = useRecipe();
   const [myRecipes, setMyRecipes] = useState([]);
 
   useEffect(() => {
-    const userRecipes = RecipeData.filter((r) => r.createdBy === loggedInUserId);
-    setMyRecipes(userRecipes);
-  }, []);
+    if (recipes) {
+      const userRecipes = recipes.filter((r) => r.createdBy === loggedInUserId);
+      setMyRecipes(userRecipes);
+    }
+  }, [recipes]);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this recipe?');
     if (confirmDelete) {
-      const updatedRecipes = myRecipes.filter((r) => r.id !== id);
-      setMyRecipes(updatedRecipes);
-      // (optional) sync deletion to backend or localStorage
+      try {
+        await deleteRecipe(id);
+        // Optionally, you can update the local state immediately
+        // const updatedRecipes = myRecipes.filter((r) => r.id !== id);
+        // setMyRecipes(updatedRecipes);
+      } catch (err) {
+        console.error('Error deleting recipe:', err);
+        // Optionally, show an error message to the user
+      }
     }
   };
+
+  if (loading) {
+    return <Typography>Loading your recipes...</Typography>;
+  }
+
+  if (error) {
+    return <Typography color="error">Error loading recipes: {error.message}</Typography>;
+  }
 
   return (
     <Box padding={4}>

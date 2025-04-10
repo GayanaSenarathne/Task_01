@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import { Link } from 'react-router-dom';
-import { useRecipe } from '../../application/context/RecipeContext'; // Adjust path as needed
+import { useRecipe } from '../../application/context/RecipeContext'; 
 
 const RecipeGrid = () => {
   const { recipes, loading, error } = useRecipe();
