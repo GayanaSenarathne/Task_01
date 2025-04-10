@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -18,10 +18,13 @@ import {
 import logo from "../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../application/context/AuthContext";
+import { useRecipe } from '../../application/context/RecipeContext'; 
 
 const Navbar = () => {
-  const { user, isLoggedIn, logout, setLocalData } = useAuth();
+  const { recipes, loading, error } = useRecipe();
+  const { user, isLoggedIn, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
@@ -31,6 +34,37 @@ const Navbar = () => {
   const handleLogoutClick = () => {
     logout();
     navigate("/login");
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault(); 
+    if (searchTerm.trim()) {
+      var lowSearchTerm = searchTerm.toLowerCase();
+      // Check if the search term matches any recipe name (case-insensitive)
+      if (recipes && recipes.length > 0) {
+        const filteredRecipes = recipes.filter((recipe) => {
+           var recipeName = recipe?.title.toLowerCase(); 
+           if(recipeName) {
+             if (recipeName.toLowerCase().includes(lowSearchTerm)){
+              return true; 
+             }
+           }
+           return false; 
+        }
+          
+        );
+        if (filteredRecipes.length > 0) {
+          navigate("/search", { state: { recipes: filteredRecipes } });
+        } else {
+          alert("No recipes found for your search term.");
+        }
+      }
+      setSearchTerm(""); // Clear search term after submission
+    }
   };
 
   return (
@@ -85,40 +119,44 @@ const Navbar = () => {
 
         {/* Search Bar and Profile Dropdown */}
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-          <TextField
-            variant="outlined"
-            size="small"
-            placeholder="Search..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: "white" }} />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "20px",
-                width: "200px",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                color: "white",
-                "& fieldset": {
-                  borderColor: "rgba(255, 255, 255, 0.3)",
+          <form onSubmit={handleSearchSubmit}>
+            <TextField
+              variant="outlined"
+              size="small"
+              placeholder="Search recipes..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "white" }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "20px",
+                  width: "200px",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  color: "white",
+                  "& fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.3)",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.5)",
+                  },
                 },
-                "&:hover fieldset": {
-                  borderColor: "rgba(255, 255, 255, 0.5)",
+                "& .MuiInputBase-input": {
+                  color: "white",
+                  "&::placeholder": {
+                    color: "rgba(255, 255, 255, 0.7)",
+                    opacity: 1,
+                  },
                 },
-              },
-              "& .MuiInputBase-input": {
-                color: "white",
-                "&::placeholder": {
-                  color: "rgba(255, 255, 255, 0.7)",
-                  opacity: 1,
-                },
-              },
-            }}
-          />
-          {/* Welocome Message */}
+              }}
+            />
+          </form>
+          {/* Welcome Message */}
           {isLoggedIn ? (
             <div>
               <p>Hi, {user?.name || "User"}</p>

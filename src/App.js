@@ -15,6 +15,7 @@ import Login from "./presentation/pages/Login";
 import Signup from "./presentation/pages/Signup";
 import { AuthProvider } from "./application/context/AuthContext";
 import { RecipeProvider } from "./application/context/RecipeContext";
+import SearchGrid from "./presentation/pages/Search";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/edit/:id" element={<EditRecipe />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/search" element={<SearchGrid/>} /> 
               </Routes>
             </div>
           </Router>
