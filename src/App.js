@@ -13,12 +13,14 @@ import AddRecipe from './presentation/pages/AddRecipe';
 import EditRecipe from './presentation/pages/EditRecipe';
 import Login from './presentation/pages/Login';
 import Signup from './presentation/pages/Signup';
+import { AuthProvider } from './application/context/AuthContext';
 
 function App() {
   return (
    
     <ThemeProvider theme={theme}> 
-    <CssBaseline /> 
+    <CssBaseline />
+    <AuthProvider>
     <Router>
       <Navbar />
       <Toolbar /> 
@@ -34,8 +36,8 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </AuthProvider>
     </ThemeProvider>
-    
   );
 }
 

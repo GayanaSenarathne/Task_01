@@ -1,0 +1,6 @@
+{
+    "users": [
+      { "id": 1, "username": "Kaveesha", "password": "Kavi@123", "email": "kaveesha@gmail.com", "token": "mock_token_123" }
+    ],
+    "recipies": []
+  }
