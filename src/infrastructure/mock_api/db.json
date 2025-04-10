@@ -1,6 +1,19 @@
 {
-    "users": [
-      { "id": 1, "username": "Kaveesha", "password": "Kavi@123", "email": "kaveesha@gmail.com", "token": "mock_token_123" }
-    ],
-    "recipies": []
-  }
+  "users": [
+    {
+      "id": "1",
+      "name": "Kaveesha",
+      "password": "Kavi@123",
+      "email": "kaveesha@gmail.com",
+      "token": "mock_token_123"
+    },
+    {
+      "id": "1fd8",
+      "name": "Kaveesha2",
+      "email": "kaveesha2@gmail.com",
+      "password": "Kavi@123",
+      "token": "mock_token_1744265164347"
+    }
+  ],
+  "recipies": []
+}
